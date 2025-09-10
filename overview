@@ -6,3 +6,6 @@
 6. trong starrocks tạo bảng và thêm thông tin connect qua service account
 7. vào superset để connect tới starrocks
 8. visual data trên superset.
+
+
+Spark-setup: https://drive.google.com/drive/folders/1VJ6IUhV6tmZHCHs5VMaiWlm2AYMly4PQ?usp=sharing
