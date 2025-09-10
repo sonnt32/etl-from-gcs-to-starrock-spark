@@ -1,0 +1,144 @@
+1. Create project folder					
+	mkdir starrocks-gcs				
+	cd starrocks-gcs				
+					
+					
+2. Dockerfile					
+	FROM starrocks/allin1-ubuntu:3.5-latest				
+					
+	# gcloud SDK 				
+	RUN apt-get update && apt-get install -y curl apt-transport-https ca-certificates gnupg && \				
+	    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" \				
+	        | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \				
+	    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg \				
+	        | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \				
+	    apt-get update && apt-get install -y google-cloud-sdk && \				
+	    apt-get clean				
+					
+				
+	WORKDIR /data/deploy				
+					
+3. Build images					
+	docker build -t starrocks-gcs .				
+4. Create swith-key.sh in service_account folder:
+
+#!/bin/bash
+KEY_FILE=$1
+if [ -z "$KEY_FILE" ]; then
+  echo "❌ Please provide a key file, e.g.: switch-key.sh annoying-puzzle.json"
+  exit 1
+fi
+
+FULL_PATH="/root/service_account/$KEY_FILE"
+
+if [ ! -f "$FULL_PATH" ]; then
+  echo "❌ Key file not found: $FULL_PATH"
+  exit 1
+fi
+
+echo "🔑 Switching to key: $FULL_PATH"
+gcloud auth activate-service-account --key-file="$FULL_PATH"
+
+gcloud auth list
+
+4. Run container and service account:				
+	Let's say your JSON service account is located at: C:\Users\PC\Downloads\annoying-puzzle.json
+
+docker volume create starrocks_fe_meta
+docker volume create starrocks_be_storage
+
+docker run -d \
+  --name starrocks-gcs \
+  -h starrocks-fe \                           
+  -p 8030:8030 \                               
+  -p 9030:9030 \                            
+  -p 8040:8040 \                               
+  -p 9050:9050 -p 9060:9060 \                  
+  -v starrocks_fe_meta:/data/deploy/starrocks/fe/meta \
+  -v starrocks_be_storage:/data/deploy/starrocks/be/storage \
+  -v /c/Users/PC/Downloads/service_account:/root/service_account \
+  starrocks-gcs
+					
+5. Switch key if you want:
+access container:
+docker exec -it starrocks-gcs bash 
+
+apt-get update && apt-get install -y dos2unix
+dos2unix /root/service_account/switch-key.sh
+
+swtich key: 
+bash /root/service_account/switch-key.sh annoying-puzzle.json
+					
+7. Demo Create External Tables in Starrocks:					
+	CREATE EXTERNAL TABLE ext_transformed_events3 (				
+	event_date STRING,				
+	event_timestamp DATETIME,				
+	event_name STRING,				
+	user_pseudo_id STRING,				
+	event_params JSON,				
+	user_properties JSON,				
+	geo JSON,				
+	device JSON,				
+	app_info JSON,				
+	platform STRING,				
+	traffic_source JSON,				
+	event_value_in_usd DOUBLE,				
+	retention_day INT				
+	)				
+	ENGINE=FILE				
+	PROPERTIES (				
+	"path" = "gs://brain-puzzle-tricky-test-export-demo/transform/",				
+	"format" = "parquet",				
+	"gcp.gcs.service_account_email" = "XXX",				
+	"gcp.gcs.service_account_private_key_id" = "YYY",				
+	"gcp.gcs.service_account_private_key" = "ZZZ"				
+	);				
+					
+					
+					
+	SELECT event_date from ext_transformed_events10;				
+					
+8. Load local:
+CREATE TABLE BRAINY_INTERNAL (
+    event_date STRING,
+    user_pseudo_id STRING,
+    event_name STRING,
+    event_timestamp STRING,
+    event_params JSON,
+    user_properties JSON,
+    geo JSON,
+    device JSON,
+    app_info JSON,
+    platform STRING,
+    traffic_source JSON,
+    event_value_in_usd DOUBLE,
+    retention_day INT
+)
+DUPLICATE KEY(event_date, user_pseudo_id, event_name)
+DISTRIBUTED BY HASH(user_pseudo_id) BUCKETS 16
+PROPERTIES ("replication_num" = "1");
+
+
+INSERT INTO BRAINY_INTERNAL
+SELECT *
+FROM FILES (
+  "path" = "gs://brain-puzzle-tricky-test-export-demo/transformed/events_20250904/*.parquet",
+  "format" = "parquet",
+"gcp.gcs.service_account_email" = "XXX",
+"gcp.gcs.service_account_private_key_id" = "YYY",
+"gcp.gcs.service_account_private_key" = "ZZZ")
+ 
+
+					
+					
+					
+					
+					
+
+					
+
+
+
+
+
+

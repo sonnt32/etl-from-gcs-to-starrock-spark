@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  fe:
+    image: starrocks/fe-ubuntu:latest
+    container_name: starrocks-fe
+    ports:
+      - "8030:8030"   # Web UI
+      - "9030:9030"   # MySQL client
+    volumes:
+      - ./fe/conf:/opt/starrocks/fe/conf
+    environment:
+      - FE_SERVERS=starrocks-fe:9010
+    command: /opt/starrocks/fe/bin/start_fe.sh
+    restart: always
+
+  be:
+    image: starrocks/be-ubuntu:latest
+    container_name: starrocks-be
+    depends_on:
+      - fe
+    volumes:
+      - ./be/conf:/opt/starrocks/be/conf
+    environment:
+      - FE_SERVERS=starrocks-fe:9010
+    command: /opt/starrocks/be/bin/start_be.sh
+    restart: always

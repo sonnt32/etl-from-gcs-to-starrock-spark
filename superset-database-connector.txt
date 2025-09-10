@@ -1,0 +1,15 @@
+## Superset Database Connector
+
+✅ Step 1: Install Python connector for StarRocks
+docker exec -it superset bash --> superset container name
+pip install starrocks
+
+✅ Step 2: Check catalog and database information in StarRocks
+SHOW CATALOGS;
+SHOW DATABASES FROM default_catalog;
+
+✅ Step 3: Create connection in Superset
+Go to Superset → Settings → Database Connections → + Database
+
+starrocks://<user>:<password>@<host>:<port>/<catalog>.<database>
+Example: starrocks://root:Sonnguyen1@<container_name_starrocks>:9030/default_catalog.ennoying
