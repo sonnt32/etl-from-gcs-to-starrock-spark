@@ -1,0 +1,8 @@
+1. extract data từ google bigquery sang gcs
+2. transform data để có dạng format cần thiết
+3. load data vào gcs để phục vụ cho tạo bảng query với superset và starrocks
+4. dựng docker cho starrocks và superset
+5. vào superset cài starrocks
+6. trong starrocks tạo bảng và thêm thông tin connect qua service account
+7. vào superset để connect tới starrocks
+8. visual data trên superset.
