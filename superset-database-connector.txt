@@ -8,8 +8,16 @@ pip install starrocks
 SHOW CATALOGS;
 SHOW DATABASES FROM default_catalog;
 
+docker network connect starrocks-net superset_cache
+docker network connect starrocks-net superset_db
+docker network connect starrocks-net superset_init
+docker network connect starrocks-net superset_worker_beat
+docker network connect starrocks-net superset_worker
+docker network connect starrocks-net superset_app
+
 ✅ Step 3: Create connection in Superset
 Go to Superset → Settings → Database Connections → + Database
 
 starrocks://<user>:<password>@<host>:<port>/<catalog>.<database>
 Example: starrocks://root:Sonnguyen1@<container_name_starrocks>:9030/default_catalog.ennoying
+
