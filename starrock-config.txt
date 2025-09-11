@@ -1,6 +1,7 @@
 1. Create project folder					
 	mkdir starrocks-gcs				
 	cd starrocks-gcs				
+	docker network create starrocks-net
 					
 					
 2. Dockerfile					
@@ -136,6 +137,7 @@ FROM FILES (
 					
 
 					
+
 
 
 
