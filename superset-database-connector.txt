@@ -2,7 +2,7 @@
 
 ✅ Step 1: Install Python connector for StarRocks
 docker exec -it superset bash --> superset container name
-pip install starrocks
+pip install "starrocks==1.0.6"
 
 ✅ Step 2: Check catalog and database information in StarRocks
 SHOW CATALOGS;
@@ -20,4 +20,5 @@ Go to Superset → Settings → Database Connections → + Database
 
 starrocks://<user>:<password>@<host>:<port>/<catalog>.<database>
 Example: starrocks://root:Sonnguyen1@<container_name_starrocks>:9030/default_catalog.ennoying
+
 
