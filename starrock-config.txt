@@ -59,7 +59,10 @@ docker run -d \
   -v starrocks_be_storage:/data/deploy/starrocks/be/storage \
   -v /c/Users/PC/Downloads/service_account:/root/service_account \
   starrocks-gcs
-					
+
+double check network: 
+docker network inspect starrocks-net
+
 5. Switch key if you want:
 access container:
 docker exec -it starrocks-gcs bash 
@@ -137,6 +140,7 @@ FROM FILES (
 					
 
 					
+
 
 
 
